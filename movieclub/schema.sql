@@ -16,6 +16,7 @@ CREATE TABLE movie (
     synopsis TEXT NOT NULL,
     released INTEGER NOT NULL,
     age_rating INTEGER NOT NULL,
+    poster TEXT UNIQUE,
     FOREIGN KEY (user_id) REFERENCES user (id)
 );
 

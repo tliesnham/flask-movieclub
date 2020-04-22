@@ -1,8 +1,13 @@
+import os
+import uuid
+
 from textwrap import shorten
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for,
+    current_app
 )
+from werkzeug.utils import secure_filename
 from werkzeug.exceptions import abort
 
 from movieclub.auth import login_required
@@ -45,6 +50,12 @@ def index():
                             shorten=shorten, pages=pages)
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in \
+            current_app.config['ALLOWED_EXTENSIONS']
+
+
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
@@ -75,13 +86,24 @@ def create():
         if error is not None:
             flash(error)
         else:
+            if 'poster' in request.files:
+                poster = request.files['poster']
+                if poster and allowed_file(poster.filename):
+                    filename = secure_filename(poster.filename)
+                    unique_filename = str(uuid.uuid4().hex)
+                    poster_path = os.path.join(
+                        current_app.config['UPLOAD_FOLDER'], unique_filename + '.' + filename.rsplit(".", 1)[1]
+                    )
+                    poster.save(poster_path)
+            
             db = get_db()
             db.execute(
-                'INSERT INTO movie (title, synopsis, released, age_rating, user_id)'
-                ' VALUES (?, ?, ?, ?, ?)',
-                (title, synopsis, released, age_rating, g.user['id'])
+                'INSERT INTO movie (title, synopsis, released, age_rating, user_id, poster)'
+                ' VALUES (?, ?, ?, ?, ?, ?)',
+                (title, synopsis, released, age_rating, g.user['id'], unique_filename)
             )
             db.commit()
+
             return redirect(url_for('movies.index'))
 
     return render_template('movies/create.html')
