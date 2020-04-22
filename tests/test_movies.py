@@ -20,17 +20,9 @@ def test_pagination(client):
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize('path', (
-    '/create',
-    '/1',
-))
-def test_login_required(client, path):
-    if path == '/1':
-        response = client.post(path, data={'rating': 5})
-        assert b'Please login to rate this movie.' in response.data
-    else:
-        response = client.post(path)
-        assert response.headers['Location'] == 'http://localhost/auth/login'
+def test_login_required(client):
+    response = client.post('/create')
+    assert response.headers['Location'] == 'http://localhost/auth/login'
 
 
 def test_create(client, auth, app):
@@ -73,8 +65,12 @@ def test_view(client):
 
 
 def test_view_rating(client, auth):
+    # can't rate when not logged in
+    response = client.post('/1', data={'rating': 5})
+    assert b'Please login to rate this movie.' in response.data
+
     auth.login()
-    response = client.post('/1', data={'rating': 10})
+    response = client.post('/1', data={'rating': 6})
     assert b'Please choose a rating from 1-5.' in response.data
 
     response = client.post('/1', data={'rating': 5})
