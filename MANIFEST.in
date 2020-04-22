@@ -1,0 +1,4 @@
+include movieclub/schema.sql
+graft movieclub/static
+graft movieclub/templates
+global-exclude *.pyc
