@@ -32,7 +32,7 @@ def index():
             abort(404)
         db = get_db()
         movies = db.execute(
-            'SELECT id, title, synopsis, created FROM movie'
+            'SELECT id, title, synopsis, created, poster FROM movie'
             ' ORDER BY created DESC'
             ' LIMIT ? OFFSET ?',
             (PER_PAGE, (page-1) * PER_PAGE,)
@@ -40,7 +40,7 @@ def index():
     else:
         db = get_db()
         movies = db.execute(
-            'SELECT id, title, synopsis, created FROM movie'
+            'SELECT id, title, synopsis, created, poster FROM movie'
             ' ORDER BY created DESC'
             ' LIMIT ?',
             (PER_PAGE,)
