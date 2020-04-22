@@ -18,7 +18,7 @@
         <span data-stars="1">☆</span>
       </div>
       <small id="message"></small>
-      {% if rating == 0 %}
+      {% if not rating %}
         <p>No rating yet.</p>
       {% else %}
       <p>{{ rating }}/5.0</p>
