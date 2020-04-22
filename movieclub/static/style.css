@@ -1,0 +1,19 @@
+.logo a {
+  text-decoration: none;
+  color: black;
+}
+
+.rating > span:hover:before {
+  content: "\2605";
+  position: absolute;
+}
+.rating {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  font: 24px Georgia,serif;
+}
+.rating > span:hover:before,
+.rating > span:hover ~ span:before {
+  content: "\2605";
+  position: absolute;
+}

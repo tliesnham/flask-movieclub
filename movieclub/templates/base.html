@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" class="h-100">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <title>{% block title %}{% endblock %} - Movieclub</title>
+  </head>
+
+  <body class="d-flex flex-column h-100">
+    <div class="container">
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 pt-3 mb-3">
+      <h5 class="logo my-0 mr-md-auto font-weight-normal"><a href="{{ url_for('movies.index') }}">Movieclub</a></h5>
+      <nav class="my-2 my-md-0 mr-md-3">
+        {% if not g.user %}
+          <a class="p-2 text-dark" href="{{ url_for('auth.login') }}">Log In</a>
+        {% endif %}
+      </nav>
+      {% if g.user %}
+        <a class="btn btn-outline-primary" href="{{ url_for('auth.logout') }}">Log Out</a>
+      {% else %}
+        <a class="btn btn-outline-primary" href="{{ url_for('auth.register') }}">Sign up</a>
+      {% endif %}
+    </div>
+  </div>
+
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer mt-5 py-3">
+      <div class="container">
+        <span class="text-muted">&copy; 2020 - Movieclub</span>
+      </div>
+    </footer>
+
+    <script src="http://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

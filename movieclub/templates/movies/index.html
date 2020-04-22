@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <h1 class="display-4">Latest Movies</h1>
+    <p class="lead">A list of the latest movies submitted by our users.</p>
+    <hr class="my-4">
+    {% if g.user %}
+      <p>See a movie missing? Add it by clicking the button below.</p>
+      <a class="btn btn-primary btn-lg" href="/create" role="button">Add Movie</a>
+    {% else %}
+      <p>Sign up to add and review your favourite movies.</p>
+      <a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}" role="button">Sign Up</a>
+    {% endif %}
+  </div>
+  {% for movie in movies %}
+    {% if loop.first or loop.index % 4 == 1 %}
+      <div class="row">
+    {% endif %}
+        <div class="col-sm-3 mt-5">
+          <div class="card">
+            <img src="{{ url_for('static', filename='img/interstellar.jpeg') }}" class="card-img-top">
+            <div class="card-body">
+              <h5 class="card-title">{{ movie['title'] }}</h5>
+              <p class="text-muted card-text">{{ shorten(movie['synopsis'], width=70, placeholder='...') }}</p>
+              <a href="{{ url_for('movies.view', id=movie['id']) }}" class="btn btn-primary">Read more</a>
+            </div>
+          </div>
+        </div>
+    {% if loop.last or loop.index % 4 == 0 %}
+      </div>
+    {% endif %}
+  {% endfor %}
+  {% if pages > 1 %}
+    <nav class="mt-5">
+      <ul class="pagination">
+        {% for page in range(1, pages + 1) %}
+          <li class="page-item"><a class="page-link" href="{{ url_for('movies.index', p=page) }}">{{ page }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+{% endblock %}

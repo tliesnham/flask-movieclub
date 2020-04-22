@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ movie['title'] }}{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-sm-4">
+      <img src="{{ url_for('static', filename='img/interstellar.jpeg') }}" class="img-fluid">
+    </div>
+    <div class="col-sm-offset-1"></div>
+    <div class="col-sm-7">
+      <h1 class="mt-5 mb-3">{{ movie['title'] }}</h1>
+      <div class="rating">
+        <span data-stars="5">☆</span>
+        <span data-stars="4">☆</span>
+        <span data-stars="3">☆</span>
+        <span data-stars="2">☆</span>
+        <span data-stars="1">☆</span>
+      </div>
+      <small id="message"></small>
+      {% if rating == 0 %}
+        <p>No rating yet.</p>
+      {% else %}
+      <p>{{ rating }}/5.0</p>
+      {% endif %}
+      <p><strong>Released:</strong> {{ movie['released'] }}</p>
+      <p><strong>Rating:</strong> {{ movie['age_rating'] }}</p>
+      <p>{{ movie['synopsis'] }}</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function() {
+      $('.rating span').click(function() {
+        $.ajax({
+          url: "{{ url_for('movies.view', id=movie['id']) }}",
+          type: 'POST',
+          data: {'rating': $(this).data().stars},
+          success: function(text) {
+            response = text;
+          }
+        }).done(function() {
+          $('#message').text(response);
+        });
+      });
+    });
+  </script>
+{% endblock %}
