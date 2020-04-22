@@ -90,9 +90,9 @@ def create():
                 poster = request.files['poster']
                 if poster and allowed_file(poster.filename):
                     filename = secure_filename(poster.filename)
-                    unique_filename = str(uuid.uuid4().hex)
+                    unique_filename = str(uuid.uuid4().hex) + '.' + filename.rsplit(".", 1)[1]
                     poster_path = os.path.join(
-                        current_app.config['UPLOAD_FOLDER'], unique_filename + '.' + filename.rsplit(".", 1)[1]
+                        current_app.config['UPLOAD_FOLDER'], unique_filename
                     )
                     poster.save(poster_path)
             
