@@ -16,7 +16,7 @@ def index():
     PER_PAGE = 8
     db = get_db()
     count = int(db.execute(
-        'SELECT COUNT(*) FROM movie'
+        'SELECT COUNT(id) FROM movie'
     ).fetchone()[0])
 
     pages = count // PER_PAGE + (count % PER_PAGE > 0)
@@ -68,9 +68,9 @@ def create():
         elif not released:
             error = 'Release year is required.'
         elif not synopsis:
-            error = 'Synopsis required.'
+            error = 'Synopsis is required.'
         elif not age_rating or age_rating not in age_ratings:
-            error = 'Please select a rating.'
+            error = 'Age rating required.'
 
         if error is not None:
             flash(error)
@@ -89,7 +89,7 @@ def create():
 
 def rate(movie_id):
     msg = None
-    rating = request.form['rating']
+    rating = int(request.form['rating'])
 
     # check user is logged in
     if g.user is not None:
@@ -100,7 +100,7 @@ def rate(movie_id):
             (g.user['id'], movie_id,)
         ).fetchone() is not None
 
-        if not rating:
+        if not rating or rating > 5:
             msg = 'Please choose a rating from 1-5.'
         if user_already_rated:
             msg = 'You have already rated this movie.'
@@ -122,26 +122,24 @@ def rate(movie_id):
 
 @bp.route('/<int:id>', methods=('GET', 'POST'))
 def view(id):
-    if request.method == 'POST':
-        return rate(id)
-    
+    rating = None
     db = get_db()
-
     movie = db.execute(
         'SELECT * FROM movie WHERE id = ?', (id,)
     ).fetchone()
 
-    ratings = db.execute(
-        'SELECT rating FROM rating WHERE movie_id = ?', (id,)
-    ).fetchall()
+    if movie is not None:
+        if request.method == 'POST':
+            return rate(id)
 
-    ratings = [rating['rating'] for rating in ratings]
-    
-    rating = 0
-    if len(ratings) > 0:
-        rating = round(sum(ratings) / len(ratings), 1)
+        ratings = db.execute(
+            'SELECT rating FROM rating WHERE movie_id = ?', (id,)
+        ).fetchall()
 
-    if movie is None:
+        ratings = [rating['rating'] for rating in ratings]
+        if len(ratings) > 0:
+            rating = round(sum(ratings) / len(ratings), 1)
+    else:
         abort(404)
 
     return render_template('movies/view.html', movie=movie, rating=rating)

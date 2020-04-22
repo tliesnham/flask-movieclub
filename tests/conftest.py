@@ -3,7 +3,7 @@ import tempfile
 
 import pytest
 from movieclub import create_app
-from movieclub.db import get_db
+from movieclub.db import get_db, init_db
 
 with open (os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
     _data_sql = f.read().decode('utf8')
@@ -42,14 +42,14 @@ class AuthActions:
     def __init__(self, client):
         self._client = client
 
-    def login(self, username='test', password='test'):
+    def login(self, username='test', password='test123'):
         return self._client.post(
             'auth/login',
             data={'username': username, 'password': password}
         )
 
-    def logout(self)
-    return self._client.get('/auth/logout')
+    def logout(self):
+        return self._client.get('/auth/logout')
 
 
 @pytest.fixture
