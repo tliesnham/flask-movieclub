@@ -124,11 +124,7 @@ def get_ratings(movie_id):
 
 
 def rate_movie(movie_id):
-    data = {
-        'msg': None,
-        'error': None,
-    }
-
+    data = {'msg': None, 'error': None,}
     rating = int(request.form['rating'])
 
     # check user is logged in
@@ -155,8 +151,8 @@ def rate_movie(movie_id):
             db.commit()
             data['msg'] = 'Thank you for your rating.'
             data['rating'] = get_ratings(movie_id)
-        else:
-            data['error'] = 'Please login to rate this movie.'
+    else:
+        data['error'] = 'Please login to rate this movie.'
 
     return data
 
