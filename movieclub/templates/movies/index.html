@@ -21,7 +21,9 @@
     {% endif %}
         <div class="col-sm-3 mt-5">
           <div class="card">
-            <img src="{{ url_for('static', filename='uploads/' + movie['poster']) }}" class="card-img-top">
+            {% if movie['poster'] %}
+              <img src="{{ url_for('static', filename='uploads/' + movie['poster']) }}" class="card-img-top">
+            {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ movie['title'] }}</h5>
               <p class="text-muted card-text">{{ shorten(movie['synopsis'], width=70, placeholder='...') }}</p>

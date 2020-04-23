@@ -60,6 +60,7 @@ def allowed_file(filename):
 @login_required
 def create():
     if request.method == 'POST':
+        unique_filename = None
         age_ratings = [
             'U',
             'PG',
