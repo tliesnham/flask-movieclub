@@ -33,18 +33,22 @@
 {% block scripts %}
   <script>
     $(document).ready(function() {
-      $('.rating span').click(function() {
-        $.ajax({
-          url: "{{ url_for('movies.view', id=movie['id']) }}",
-          type: 'POST',
-          data: {'rating': $(this).data().stars},
-          success: function(text) {
-            response = text;
-          }
-        }).done(function() {
-          $('#message').text(response);
+      var clicked = false;
+      if (clicked == false) {
+        $('.rating span').click(function() {
+          $.ajax({
+            url: "{{ url_for('movies.view', id=movie['id']) }}",
+            type: 'POST',
+            data: {'rating': $(this).data().stars},
+            success: function(text) {
+              response = text;
+            }
+          }).done(function() {
+            $('#message').text(response);
+          });
+          clicked = true;
         });
-      });
+      }
     });
   </script>
 {% endblock %}
