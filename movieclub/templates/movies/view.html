@@ -19,9 +19,9 @@
       </div>
       <small id="message"></small>
       {% if not rating %}
-        <p>No rating yet.</p>
+        <p id="rating">No rating yet.</p>
       {% else %}
-      <p>{{ rating }}/5.0</p>
+      <p id="rating">{{ rating }}/5.0</p>
       {% endif %}
       <p><strong>Released:</strong> {{ movie['released'] }}</p>
       <p><strong>Rating:</strong> {{ movie['age_rating'] }}</p>
@@ -45,8 +45,13 @@
               response = text;
             }
           }).done(function() {
-            $('#message').text(response);
-          });
+            if (response.error) {
+              $('#message').text(response.error);
+            } else {
+              $("#rating").text(response.rating.toFixed(1) + '/5.0');
+              $('#message').text(response.msg);
+            }
+          })
         }
       });
     });

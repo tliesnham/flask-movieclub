@@ -17,20 +17,20 @@
 
   <body class="d-flex flex-column h-100">
     <div class="container">
-    <div class="d-flex flex-column flex-md-row align-items-center pb-3 pt-3 mb-3">
-      <h5 class="logo my-0 mr-md-auto font-weight-normal"><a href="{{ url_for('movies.index') }}">Movieclub</a></h5>
-      <nav class="my-2 my-md-0 mr-md-3">
-        {% if not g.user %}
-          <a class="p-2 text-dark" href="{{ url_for('auth.login') }}">Log In</a>
+      <div class="d-flex flex-column flex-md-row align-items-center pb-3 pt-3 mb-3">
+        <h5 class="logo my-0 mr-md-auto font-weight-normal"><a href="{{ url_for('movies.index') }}">Movieclub</a></h5>
+        <nav class="my-2 my-md-0 mr-md-3">
+          {% if not g.user %}
+            <a class="p-2 text-dark" href="{{ url_for('auth.login') }}">Log In</a>
+          {% endif %}
+        </nav>
+        {% if g.user %}
+          <a class="btn btn-outline-primary" href="{{ url_for('auth.logout') }}">Log Out</a>
+        {% else %}
+          <a class="btn btn-outline-primary" href="{{ url_for('auth.register') }}">Sign up</a>
         {% endif %}
-      </nav>
-      {% if g.user %}
-        <a class="btn btn-outline-primary" href="{{ url_for('auth.logout') }}">Log Out</a>
-      {% else %}
-        <a class="btn btn-outline-primary" href="{{ url_for('auth.register') }}">Sign up</a>
-      {% endif %}
+      </div>
     </div>
-  </div>
 
     <div class="container">
       {% block content %}{% endblock %}
@@ -38,7 +38,7 @@
 
     <footer class="footer mt-5 py-3">
       <div class="container">
-        <span class="text-muted">&copy; 2020 - Movieclub</span>
+        <span class="text-muted">&copy; 2020 - Movieclub (<a href="https://github.com/tliesnham/flask-movieclub">GitHub</a>)</span>
       </div>
     </footer>
 

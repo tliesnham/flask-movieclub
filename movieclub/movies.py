@@ -109,8 +109,26 @@ def create():
     return render_template('movies/create.html')
 
 
-def rate(movie_id):
-    msg = None
+def get_ratings(movie_id):
+    db = get_db()
+    rating = None
+    ratings = db.execute(
+        'SELECT rating FROM rating WHERE movie_id = ?', (movie_id,)
+    ).fetchall()
+
+    ratings = [rating['rating'] for rating in ratings]
+    if len(ratings) > 0:
+        rating = round(sum(ratings) / len(ratings), 1)
+    print(rating)
+    return rating
+
+
+def rate_movie(movie_id):
+    data = {
+        'msg': None,
+        'error': None,
+    }
+
     rating = int(request.form['rating'])
 
     # check user is logged in
@@ -123,11 +141,11 @@ def rate(movie_id):
         ).fetchone() is not None
 
         if not rating or rating > 5:
-            msg = 'Please choose a rating from 1-5.'
+            data['error'] = 'Please choose a rating from 1-5.'
         if user_already_rated:
-            msg = 'You have already rated this movie.'
+            data['error'] = 'You have already rated this movie.'
 
-        if msg is None:
+        if data['error'] is None:
             db = get_db()
             db.execute(
                 'INSERT INTO rating (rating, user_id, movie_id)'
@@ -135,11 +153,12 @@ def rate(movie_id):
                 (rating, g.user['id'], movie_id)
             )
             db.commit()
-            msg = 'Thank you for your rating.'
+            data['msg'] = 'Thank you for your rating.'
+            data['rating'] = get_ratings(movie_id)
+        else:
+            data['error'] = 'Please login to rate this movie.'
 
-        return msg
-
-    return 'Please login to rate this movie.'
+    return data
 
 
 @bp.route('/<int:id>', methods=('GET', 'POST'))
@@ -152,15 +171,9 @@ def view(id):
 
     if movie is not None:
         if request.method == 'POST':
-            return rate(id)
+            return rate_movie(id)
 
-        ratings = db.execute(
-            'SELECT rating FROM rating WHERE movie_id = ?', (id,)
-        ).fetchall()
-
-        ratings = [rating['rating'] for rating in ratings]
-        if len(ratings) > 0:
-            rating = round(sum(ratings) / len(ratings), 1)
+        rating = get_ratings(id)
     else:
         abort(404)
 
