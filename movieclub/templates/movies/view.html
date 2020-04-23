@@ -33,9 +33,10 @@
 {% block scripts %}
   <script>
     $(document).ready(function() {
-      var clicked = false;
-      if (clicked == false) {
-        $('.rating span').click(function() {
+      var alread_clicked = false;
+      $('.rating span').click(function() {
+        if (alread_clicked == false) {
+          alread_clicked = true;
           $.ajax({
             url: "{{ url_for('movies.view', id=movie['id']) }}",
             type: 'POST',
@@ -46,9 +47,8 @@
           }).done(function() {
             $('#message').text(response);
           });
-          clicked = true;
-        });
-      }
+        }
+      });
     });
   </script>
 {% endblock %}
