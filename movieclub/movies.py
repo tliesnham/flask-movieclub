@@ -165,7 +165,7 @@ def get_ratings(id):
 
     return rating
 
-@login_required
+
 def rate_movie(id):
     data = {'msg': None, 'error': None,}
     rating = int(request.form['rating'])
