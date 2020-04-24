@@ -12,6 +12,7 @@ A simple Flask application to rate and sort a database of user submitted movies.
 ## Features
 * User authentication and logged in checking.
 * Ajax based rating system.
-* List pagination.
+* Pagination.
 * Testing coverage.
 * Image uploads.
+* Edit existing records.
