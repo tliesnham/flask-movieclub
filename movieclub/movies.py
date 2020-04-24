@@ -110,21 +110,63 @@ def create():
     return render_template('movies/create.html')
 
 
-def get_ratings(movie_id):
-    db = get_db()
+def get_movie(id):
+    movie = get_db().execute(
+        'SELECT id, title, synopsis, released, age_rating, poster'
+        ' FROM movie WHERE id = ?',
+        (id,)
+    ).fetchone()
+
+    if movie is None:
+        abort(404, f"Movie id {id} doesn't exist.")
+
+    return movie
+
+
+@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@login_required
+def update(id):
+    movie = get_movie(id)
+
+    if request.method == 'POST':
+        title = request.form['title']
+        synopsis = request.form['synopsis']
+        release_year = request.form['release_year']
+        age_rating = request.form['age_rating']
+        error = None
+
+        if not title:
+            error = 'Title is required.'
+
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            db.execute(
+                'UPDATE movie SET title = ?, synopsis = ?, released = ?,'
+                ' age_rating = ? WHERE id = ?',
+                (title, synopsis, release_year, age_rating, id)
+            )
+            db.commit()
+            return redirect(url_for('movies.index'))
+    
+    return render_template('movies/update.html', movie=movie)
+
+
+def get_ratings(id):
     rating = None
-    ratings = db.execute(
-        'SELECT rating FROM rating WHERE movie_id = ?', (movie_id,)
+    ratings = get_db().execute(
+        'SELECT rating FROM rating WHERE movie_id = ?', (id,)
     ).fetchall()
 
     ratings = [rating['rating'] for rating in ratings]
     if len(ratings) > 0:
         rating = round(sum(ratings) / len(ratings), 1)
-    print(rating)
+
     return rating
 
-
-def rate_movie(movie_id):
+@login_required
+def rate_movie(id):
     data = {'msg': None, 'error': None,}
     rating = int(request.form['rating'])
 
@@ -134,7 +176,7 @@ def rate_movie(movie_id):
         user_already_rated = db.execute(
             'SELECT * FROM rating WHERE user_id = ?'
             ' AND movie_id = ?',
-            (g.user['id'], movie_id,)
+            (g.user['id'], id,)
         ).fetchone() is not None
 
         if not rating or rating > 5:
@@ -147,11 +189,11 @@ def rate_movie(movie_id):
             db.execute(
                 'INSERT INTO rating (rating, user_id, movie_id)'
                 ' VALUES (?, ?, ?)',
-                (rating, g.user['id'], movie_id)
+                (rating, g.user['id'], id)
             )
             db.commit()
             data['msg'] = 'Thank you for your rating.'
-            data['rating'] = get_ratings(movie_id)
+            data['rating'] = get_ratings(id)
     else:
         data['error'] = 'Please login to rate this movie.'
 
@@ -160,18 +202,10 @@ def rate_movie(movie_id):
 
 @bp.route('/<int:id>', methods=('GET', 'POST'))
 def view(id):
-    rating = None
-    db = get_db()
-    movie = db.execute(
-        'SELECT * FROM movie WHERE id = ?', (id,)
-    ).fetchone()
+    movie = get_movie(id)
+    rating = get_ratings(id)
 
-    if movie is not None:
-        if request.method == 'POST':
-            return rate_movie(id)
-
-        rating = get_ratings(id)
-    else:
-        abort(404)
+    if request.method == 'POST':
+        return rate_movie(id)
 
     return render_template('movies/view.html', movie=movie, rating=rating)

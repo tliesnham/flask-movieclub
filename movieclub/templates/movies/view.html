@@ -28,6 +28,7 @@
       <p><strong>Released:</strong> {{ movie['released'] }}</p>
       <p><strong>Rating:</strong> {{ movie['age_rating'] }}</p>
       <p>{{ movie['synopsis'] }}</p>
+      <a class="btn btn-primary mt-3" href="{{ url_for('movies.update', id=movie['id']) }}">Edit details</a>
     </div>
   </div>
 {% endblock %}
