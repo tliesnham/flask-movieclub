@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Update{% endblock %}
+
+{% block content %}
+  <div class="jumbotron">
+    <h1 class="display-4">Update Movie</h1>
+  </div>
+  <h2 class="mb-3 mt-5"></h2>
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-danger" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+  <form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="poster">Poster</label>
+      <input type="file" class="form-control-file" name="poster" id="poster">
+    </div>
+    <div class="form-group">
+      <label for="title">Film title*</label>
+      <input type="text" class="form-control" name="title" id="title" value="{{ request.form['title'] or movie['title'] }}" required>
+    </div>
+    <div class="form-group">
+      <label for="release_year">Release year*</label>
+      <input type="text" class="form-control" name="release_year" id="release_year" value="{{ request.form['release_year'] or movie['released'] }}" required>
+    </div>
+    <div class="form-group">
+      <label for="age_rating">Age rating*</label>
+      <select class="form-control" name="age_rating" id="age_rating" required>
+        <option value="U">U</option>
+        <option value="PG">PG</option>
+        <option value="12A">12A</option>
+        <option value="15">15</option>
+        <option value="18">18</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="synopsis">Synopsis*</label>
+      <textarea class="form-control" name="synopsis" id="synopsis" required>{{ request.form['synopsis'] or movie['synopsis'] }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    var age_rating = "{{ request.form['age_rating'] or movie['age_rating'] }}";
+    $(document).ready(function() {
+      $('#age_rating option').each(function() {
+        if (age_rating == $(this).val()) {
+          $(this).prop('selected', true);
+        }
+      })
+    });
+  </script>
+{% endblock %}
