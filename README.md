@@ -7,12 +7,12 @@
 * [Features](#features)
 
 ## Introduction
-A simple Flask application to rate and sort a database of user submitted movies. Frontend built with Bootstrap 4 and jQuery. A demo of the site is available [here](https://tliesnham.pythonanywhere.com/).
+A Flask application to rate and sort user submitted movies. A demo of the site can be found [here](https://tliesnham.pythonanywhere.com/).
 
 ## Features
-* User authentication and logged in checking.
-* Ajax based rating system.
+* User authentication and user logged in checking.
+* Rate movies using Ajax.
 * Pagination.
 * Testing coverage.
 * Image uploads.
-* Edit existing records.
+* Edit existing movies.
